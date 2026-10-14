@@ -31,16 +31,9 @@ the operation underneath is one operation.
 | Parameters | **learned** by gradient descent | **set by hand**, per experiment |
 | Implementation | PyTorch, GPU | MATLAB, CPU |
 
-The last two rows matter as much as the first: IBNN Lite is a trainable layer
-you drop into a network, INME is a model whose parameters are chosen to match
-physiology and psychophysics. Unifying them means more than merging files.
 
 ## IBNN Lite
 
-`ibnn_lite/ibnn_lite.py` is a compact reimplementation, about 50 lines of
-actual computation, written to be read in one sitting. It is numerically
-equivalent to `IBNNLiteLayer` of the full library, verified to 1.5e-05 across
-batch sizes, channel counts, image sizes and kernel sizes.
 
 ```bash
 cd ibnn_lite
@@ -61,11 +54,6 @@ apart, the bright side enhanced and the dark side suppressed. That asymmetry
 around a luminance step is what produces Mach bands in human vision, and it
 falls out of the architecture rather than being put in by hand.
 
-To check the equivalence against the full library yourself:
-
-```bash
-PYTHONPATH=/path/to/ibnn/src python3 test_equivalence.py
-```
 
 ## INME
 
