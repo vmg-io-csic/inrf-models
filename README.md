@@ -144,4 +144,4 @@ everything to do with training classifiers.
 
 ## License
 
-MIT. See `LICENSE`.
+Apache License 2.0, the same as the `ibnn` repository. See `LICENSE`.

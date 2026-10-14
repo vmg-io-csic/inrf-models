@@ -1,3 +1,17 @@
+# Copyright 2026 Vision Modeling Group, Instituto de Optica "Daza de Valdes" (CSIC)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://apache.org
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """IBNN Lite: a compact, readable implementation of the layer.
 
 This is a self-contained reimplementation, written so that the whole operation
@@ -27,23 +41,34 @@ import torch.nn.functional as F
 class IBNNLite(nn.Module):
     """IBNN Lite layer.
 
-    Inputs
-      in_channels       int. Channels of the input, e.g. 3 for an RGB image.
-      out_channels      int. Channels of the output, i.e. how many filters M.
-      m_kernel_size     int. Side of the M filter. 3 gives a 3x3 window.
-      w_kernel_size     int. Side of the neighbourhood that Omega pools over.
-      phi               callable. Outer nonlinearity. Default: ReLU.
-      sigma             callable. Inner nonlinearity, applied to the differences
-                        with the neighbours. Default: tanh.
-      sigma_x_compress  float. Scales the difference before sigma. The larger it
-                        is, the sooner sigma saturates. Default 10.0, which
-                        makes the layer sensitive to differences below ~0.3 and
-                        blind to anything larger.
-      lambda_init       float. Initial weight of the correction. With 0 the
-                        layer is exactly a convolution followed by phi.
+    Parameters
+    ----------
+    in_channels : int
+        Channels of the input, for example 3 for an RGB image.
+    out_channels : int
+        Channels of the output, that is, how many filters M.
+    m_kernel_size : int, optional
+        Side of the M filter. 3 gives a 3x3 window. Default: ``3``
+    w_kernel_size : int, optional
+        Side of the neighbourhood that Omega pools over. Default: ``3``
+    phi : callable, optional
+        Outer nonlinearity. Default: ``torch.nn.functional.relu``
+    sigma : callable, optional
+        Inner nonlinearity, applied to the differences with the neighbours.
+        Default: ``torch.tanh``
+    sigma_x_compress : float, optional
+        Scales the difference before sigma. The larger it is, the sooner sigma
+        saturates. The default makes the layer sensitive to differences below
+        about 0.3 and blind to anything larger. Default: ``10.0``
+    lambda_init : float, optional
+        Initial weight of the correction. With 0 the layer is exactly a
+        convolution followed by phi. Default: ``0.0``
 
-    Outputs
-      Tensor (B, out_channels, H, W), the same height and width as the input.
+    Returns
+    -------
+    torch.Tensor
+        Of size (B, out_channels, H, W), the same height and width as the
+        input.
 
     Example
       layer = IBNNLite(3, 16, m_kernel_size=3, w_kernel_size=3)

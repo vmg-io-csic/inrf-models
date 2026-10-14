@@ -1,3 +1,17 @@
+# Copyright 2026 Vision Modeling Group, Instituto de Optica "Daza de Valdes" (CSIC)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://apache.org
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Check that this compact IBNN Lite matches the one in the full library.
 
 Run with:   python3 test_equivalence.py
@@ -39,12 +53,23 @@ CASES = [
 def run_case(B, c_in, c_out, H, W, k, phi_name):
     """Build both layers with the same weights and compare their outputs.
 
-    Inputs
-      B, c_in, c_out, H, W, k  ints. Shape of the test case.
-      phi_name                 str. 'relu' or 'identity'.
+    Parameters
+    ----------
+    B : int
+        Batch size.
+    c_in, c_out : int
+        Input and output channels.
+    H, W : int
+        Height and width of the test image.
+    k : int
+        Side of both kernels.
+    phi_name : str
+        Outer nonlinearity, ``'relu'`` or ``'identity'``.
 
-    Outputs
-      float. Largest absolute difference between the two outputs.
+    Returns
+    -------
+    float
+        Largest absolute difference between the two outputs.
     """
     torch.manual_seed(B + c_in + c_out + H + k)
     x = torch.randn(B, c_in, H, W)
@@ -72,6 +97,7 @@ def run_case(B, c_in, c_out, H, W, k, phi_name):
 
 
 def main():
+    """Run every case and report the worst disagreement."""
     print("  comparing against IBNNLiteLayer in exact mode\n")
     worst = 0.0
     for case in CASES:

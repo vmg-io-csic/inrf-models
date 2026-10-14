@@ -1,3 +1,17 @@
+# Copyright 2026 Vision Modeling Group, Instituto de Optica "Daza de Valdes" (CSIC)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://apache.org
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Demo: what IBNN Lite does that a convolution does not.
 
 Run with:   python3 demo_ibnn_lite.py
@@ -6,25 +20,29 @@ The stimulus is a luminance step. With lambda = 0 the layer is exactly a
 convolution and reproduces the step unchanged. With lambda > 0 the correction
 switches on and the two pixels flanking the step are pushed apart: the bright
 side is enhanced and the dark side is suppressed, while uniform regions are
-left untouched. That is edge enhancement, the same asymmetry around a step that
-produces Mach bands in human vision.
+left untouched. That is edge enhancement, the same asymmetry around a step
+that produces Mach bands in human vision.
 """
 
 import torch
-import torch.nn.functional as F
 
 from ibnn_lite import IBNNLite
 
 
 def step_image(size=9, edge=5):
-    """A single-channel image, dark on the left and bright on the right.
+    """Build a single-channel image, dark on the left and bright on the right.
 
-    Inputs
-      size  int. Side of the square image.
-      edge  int. Column at which the step begins.
+    Parameters
+    ----------
+    size : int, optional
+        Side of the square image. Default: ``9``
+    edge : int, optional
+        Column at which the step begins. Default: ``5``
 
-    Outputs
-      Tensor (1, 1, size, size).
+    Returns
+    -------
+    torch.Tensor
+        Of size (1, 1, size, size).
     """
     x = torch.zeros(1, 1, size, size)
     x[:, :, :, edge:] = 1.0
@@ -32,16 +50,20 @@ def step_image(size=9, edge=5):
 
 
 def identity_layer(lam):
-    """An IBNNLite whose M is a 1x1 identity, so U is the input itself.
+    """Build an IBNNLite whose M is a 1x1 identity, so U is the input itself.
 
     This isolates the correction: any difference from the input must come from
     the IBNN term and not from the convolution.
 
-    Inputs
-      lam  float. Weight of the correction.
+    Parameters
+    ----------
+    lam : float
+        Weight of the correction.
 
-    Outputs
-      IBNNLite with one input and one output channel.
+    Returns
+    -------
+    IBNNLite
+        With one input and one output channel, and phi the identity.
     """
     layer = IBNNLite(1, 1, m_kernel_size=1, w_kernel_size=3,
                      phi=lambda z: z, lambda_init=lam)
@@ -52,6 +74,7 @@ def identity_layer(lam):
 
 
 def main():
+    """Run the demo and print the results."""
     x = step_image()
     row = 4                                  # central row, away from the border
 
